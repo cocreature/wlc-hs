@@ -27,15 +27,19 @@ module WLC
   , WLCTouchTypeBit(..)
   , WLCViewStateBit(..)
   , wlcInit
+  , wlcOutputGetMask
   , wlcOutputGetViews
   , wlcOutputGetResolution
+  , wlcOutputSetMask
   , wlcRun
   , wlcTerminate
   , wlcViewBringToFront
   , wlcViewClose
   , wlcViewFocus
+  , wlcViewGetMask
   , wlcViewGetOutput
   , wlcViewSetGeometry
+  , wlcViewSetMask
   , wlcViewSetState
   ) where
 
@@ -271,8 +275,12 @@ instance Storable WLCSize where
 {#fun wlc_terminate as ^ {} -> `()'#}
 {#fun wlc_output_get_resolution as ^ {id `WLCHandle'} -> `WLCSize' peek*#}
 {#fun wlc_output_get_views as wlcOutputGetViews' {id `WLCHandle', alloca- `CSize' peek*} -> `Ptr WLCHandle' id#}
+{#fun wlc_output_get_mask as ^ {id `WLCHandle'} -> `CUInt' id#}
+{#fun wlc_output_set_mask as ^ {id `WLCHandle', `CUInt'} -> `()' id#}
 {#fun wlc_view_bring_to_front as ^ {id `WLCHandle'} -> `()'#}
 {#fun wlc_view_focus as ^ {id `WLCHandle'} -> `()'#}
+{#fun wlc_view_get_mask as ^ {id `WLCHandle'} -> `CUInt' id#}
+{#fun wlc_view_set_mask as ^ {id `WLCHandle', `CUInt'} -> `()' id#}
 {#fun wlc_view_get_output as ^ {id `WLCHandle'} -> `WLCHandle' id#}
 {#fun wlc_view_set_geometry as ^ {id `WLCHandle', with* `WLCGeometry'} -> `()'#}
 {#fun wlc_view_set_state as ^ {id `WLCHandle', `WLCViewState', `Bool'} -> `()'#}
