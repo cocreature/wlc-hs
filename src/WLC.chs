@@ -61,11 +61,12 @@ data WLCInterface =
                ,_view :: WLCView
                ,_keyboard :: WLCKeyboard
                ,_pointer :: WLCPointer
-               ,_touch :: WLCTouch}
+               ,_touch :: WLCTouch
+               ,_compositor :: WLCCompositor}
   deriving (Show)
 
 instance Default WLCInterface where
-  def = WLCInterface def def def def def
+  def = WLCInterface def def def def def def
 
 data WLCOutput =
   WLCOutput {_outputCreated :: FunPtr (WLCHandle -> IO CBool)
@@ -127,6 +128,13 @@ data WLCTouch =
 
 instance Default WLCTouch where
   def = WLCTouch nullFunPtr
+
+data WLCCompositor =
+  WLCCompositor {_ready :: FunPtr (IO ())}
+  deriving (Show)
+
+instance Default WLCCompositor where
+  def = WLCCompositor nullFunPtr
 
 data WLCSize =
   WLCSize CUInt
@@ -216,35 +224,39 @@ instance Storable WLCInterface where
     p_scroll <- {#get wlc_interface->pointer.scroll#} p
     p_motion <- {#get wlc_interface->pointer.motion#} p
     t_touch <- {#get wlc_interface->touch.touch#} p
+    c_ready <- {#get wlc_interface->compositor.ready#} p
     return (WLCInterface
               (WLCOutput o_created o_destroyed o_focus o_resolution)
               (WLCView v_created v_destroyed v_focus v_move_to_output
                        (WLCRequest v_r_geometry v_r_state))
               (WLCKeyboard k_key)
               (WLCPointer p_button p_scroll p_motion)
-              (WLCTouch t_touch))
+              (WLCTouch t_touch)
+              (WLCCompositor c_ready))
   poke p (WLCInterface
           (WLCOutput o_created o_destroyed o_focus o_resolution)
           (WLCView v_created v_destroyed v_focus v_move_to_output
                    (WLCRequest v_r_geometry v_r_state))
           (WLCKeyboard k_key)
           (WLCPointer p_button p_scroll p_motion)
-          (WLCTouch t_touch)) = do
-    {#set wlc_interface.output.created#} p o_created
-    {#set wlc_interface.output.destroyed#} p o_destroyed
-    {#set wlc_interface.output.focus#} p o_focus
-    {#set wlc_interface.output.resolution#} p o_resolution
-    {#set wlc_interface.view.created#} p v_created
-    {#set wlc_interface.view.destroyed#} p v_destroyed
-    {#set wlc_interface.view.focus#} p v_focus
-    {#set wlc_interface.view.move_to_output#} p v_move_to_output
-    {#set wlc_interface.view.request.geometry#} p v_r_geometry
-    {#set wlc_interface.view.request.state#} p v_r_state
-    {#set wlc_interface.keyboard.key#} p k_key
-    {#set wlc_interface.pointer.button#} p p_button
-    {#set wlc_interface.pointer.scroll#} p p_scroll
-    {#set wlc_interface.pointer.motion#} p p_motion
-    {#set wlc_interface.touch.touch#} p t_touch
+          (WLCTouch t_touch)
+          (WLCCompositor c_ready)) = do
+            {#set wlc_interface.output.created#} p o_created
+            {#set wlc_interface.output.destroyed#} p o_destroyed
+            {#set wlc_interface.output.focus#} p o_focus
+            {#set wlc_interface.output.resolution#} p o_resolution
+            {#set wlc_interface.view.created#} p v_created
+            {#set wlc_interface.view.destroyed#} p v_destroyed
+            {#set wlc_interface.view.focus#} p v_focus
+            {#set wlc_interface.view.move_to_output#} p v_move_to_output
+            {#set wlc_interface.view.request.geometry#} p v_r_geometry
+            {#set wlc_interface.view.request.state#} p v_r_state
+            {#set wlc_interface.keyboard.key#} p k_key
+            {#set wlc_interface.pointer.button#} p p_button
+            {#set wlc_interface.pointer.scroll#} p p_scroll
+            {#set wlc_interface.pointer.motion#} p p_motion
+            {#set wlc_interface.touch.touch#} p t_touch
+            {#set wlc_interface.compositor.ready#} p c_ready
 
 instance Storable WLCModifiers where
   sizeOf _ = {#sizeof wlc_modifiers#}
