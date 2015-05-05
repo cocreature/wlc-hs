@@ -20,6 +20,8 @@ module WLC
   , WLCSizePtr
   , CBool
   , WLCHandle
+  , WLCOutputPtr(..)
+  , WLCViewPtr(..)
   , WLCModifier(..)
   , WLCButtonStateBit(..)
   , WLCKeyStateBit(..)
@@ -205,6 +207,9 @@ type WLCModifierBit = CInt
 type WLCHandle = CULong
 type CBool = CInt
 
+newtype WLCOutputPtr = WLCOutputPtr { unwrapOutput ::  WLCHandle } deriving (Show,Eq,Ord)
+newtype WLCViewPtr = WLCViewPtr { unwrapView :: WLCHandle } deriving (Show,Eq,Ord)
+
 instance Storable WLCInterface where
   sizeOf _ = {#sizeof wlc_interface#}
   alignment _ = {#alignof wlc_interface#}
@@ -285,20 +290,20 @@ instance Storable WLCSize where
 {#fun wlc_init as ^ {with* `WLCInterface', withStringListLen* `[String]'&} -> `Bool'#}
 {#fun wlc_run as ^ {} -> `()'#}
 {#fun wlc_terminate as ^ {} -> `()'#}
-{#fun wlc_output_get_resolution as ^ {id `WLCHandle'} -> `WLCSize' peek*#}
-{#fun wlc_output_get_views as wlcOutputGetViews' {id `WLCHandle', alloca- `CSize' peek*} -> `Ptr WLCHandle' id#}
-{#fun wlc_output_get_mask as ^ {id `WLCHandle'} -> `CUInt' id#}
-{#fun wlc_output_set_mask as ^ {id `WLCHandle', `CUInt'} -> `()' id#}
-{#fun wlc_view_bring_to_front as ^ {id `WLCHandle'} -> `()'#}
-{#fun wlc_view_focus as ^ {id `WLCHandle'} -> `()'#}
-{#fun wlc_view_get_mask as ^ {id `WLCHandle'} -> `CUInt' id#}
-{#fun wlc_view_set_mask as ^ {id `WLCHandle', `CUInt'} -> `()' id#}
-{#fun wlc_view_get_output as ^ {id `WLCHandle'} -> `WLCHandle' id#}
-{#fun wlc_view_set_geometry as ^ {id `WLCHandle', with* `WLCGeometry'} -> `()'#}
-{#fun wlc_view_set_state as ^ {id `WLCHandle', `WLCViewState', `Bool'} -> `()'#}
-{#fun wlc_view_close as ^ {id `WLCHandle'} -> `()' id#}
+{#fun wlc_output_get_resolution as ^ {unwrapOutput `WLCOutputPtr'} -> `WLCSize' peek*#}
+{#fun wlc_output_get_views as wlcOutputGetViews' {unwrapOutput `WLCOutputPtr', alloca- `CSize' peek*} -> `Ptr WLCHandle' id#}
+{#fun wlc_output_get_mask as ^ {unwrapOutput `WLCOutputPtr'} -> `CUInt' id#}
+{#fun wlc_output_set_mask as ^ {unwrapOutput `WLCOutputPtr', `CUInt'} -> `()' id#}
+{#fun wlc_view_bring_to_front as ^ {unwrapView `WLCViewPtr'} -> `()'#}
+{#fun wlc_view_focus as ^ {unwrapView `WLCViewPtr'} -> `()'#}
+{#fun wlc_view_get_mask as ^ {unwrapView `WLCViewPtr'} -> `CUInt' id#}
+{#fun wlc_view_set_mask as ^ {unwrapView `WLCViewPtr', `CUInt'} -> `()' id#}
+{#fun wlc_view_get_output as ^ {unwrapView `WLCViewPtr'} -> `WLCHandle' id#}
+{#fun wlc_view_set_geometry as ^ {unwrapView `WLCViewPtr', with* `WLCGeometry'} -> `()'#}
+{#fun wlc_view_set_state as ^ {unwrapView `WLCViewPtr', `WLCViewState', `Bool'} -> `()'#}
+{#fun wlc_view_close as ^ {unwrapView `WLCViewPtr'} -> `()' id#}
 
-wlcOutputGetViews :: WLCHandle -> IO [WLCHandle]
+wlcOutputGetViews :: WLCOutputPtr -> IO [WLCHandle]
 wlcOutputGetViews handle = do
   (ptr,size) <- wlcOutputGetViews' handle
   peekArray (fromIntegral size) ptr
