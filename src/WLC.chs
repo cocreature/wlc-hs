@@ -32,6 +32,7 @@ module WLC
   , wlcOutputGetMask
   , wlcOutputGetViews
   , wlcOutputGetResolution
+  , wlcOutputFocus
   , wlcOutputSetMask
   , wlcRun
   , wlcTerminate
@@ -294,6 +295,7 @@ instance Storable WLCSize where
 {#fun wlc_output_get_views as wlcOutputGetViews' {unwrapOutput `WLCOutputPtr', alloca- `CSize' peek*} -> `Ptr WLCHandle' id#}
 {#fun wlc_output_get_mask as ^ {unwrapOutput `WLCOutputPtr'} -> `CUInt' id#}
 {#fun wlc_output_set_mask as ^ {unwrapOutput `WLCOutputPtr', `CUInt'} -> `()' id#}
+{#fun wlc_output_focus as ^ {unwrapOutput `WLCOutputPtr'} -> `()' id#}
 {#fun wlc_view_bring_to_front as ^ {unwrapView `WLCViewPtr'} -> `()'#}
 {#fun wlc_view_focus as ^ {unwrapView `WLCViewPtr'} -> `()'#}
 {#fun wlc_view_get_mask as ^ {unwrapView `WLCViewPtr'} -> `CUInt' id#}
