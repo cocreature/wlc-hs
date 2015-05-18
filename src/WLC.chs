@@ -46,14 +46,12 @@ module WLC
   , wlcViewSetState
   ) where
 
-import BasePrelude
-import Prelude ()
-
 import Control.Lens
 import Data.Default
 import Foreign
 import Foreign.C.String
 import Foreign.C.Types
+import Text.PrettyPrint.HughesPJClass
 import System.IO.Unsafe
 
 #include <wlc/wlc.h>
@@ -211,6 +209,18 @@ type CBool = CInt
 newtype WLCOutputPtr = WLCOutputPtr { unwrapOutput ::  WLCHandle } deriving (Show,Eq,Ord)
 newtype WLCViewPtr = WLCViewPtr { unwrapView :: WLCHandle } deriving (Show,Eq,Ord)
 
+instance Pretty WLCOutputPtr where
+  pPrint (WLCOutputPtr h) = text "WLCOutputPtr" <+> pPrint h
+
+instance Pretty WLCViewPtr where
+  pPrint (WLCViewPtr h) = text "WLCViewPtr" <+> pPrint h
+
+instance Pretty CULong where
+  pPrint = text . show
+
+instance Pretty CUInt where
+  pPrint = text . show
+
 instance Storable WLCInterface where
   sizeOf _ = {#sizeof wlc_interface#}
   alignment _ = {#alignof wlc_interface#}
@@ -313,4 +323,4 @@ wlcOutputGetViews handle = do
 withStringListLen :: [String] -> ((CInt, Ptr (Ptr CChar)) -> IO a) -> IO a
 withStringListLen args f = do
   cstrings <- mapM newCString args
-  withArray cstrings (\array -> f (genericLength args, array))
+  withArray cstrings (\array -> f (fromIntegral $ length args, array))

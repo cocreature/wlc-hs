@@ -67,6 +67,7 @@ library
                      , process >= 1.2
                      , transformers >= 0.4
                      , xkbcommon >= 0.0.1
+                     , pretty >= 1.1
   
   -- Directories containing source files.
   hs-source-dirs:      src
