@@ -140,7 +140,7 @@ instance Default WLCCompositor where
 data WLCSize =
   WLCSize CUInt
           CUInt
-  deriving (Show)
+  deriving (Show,Eq,Ord)
 
 
 data WLCRequest =
