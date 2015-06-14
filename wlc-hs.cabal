@@ -36,7 +36,7 @@ maintainer:          moritz.kiefer@purelyfunctional.org
 
 category:            System
 
-build-type:          Simple
+build-type:          Custom
 
 -- Extra files to be distributed with the package, such as examples or a 
 -- README.
