@@ -76,4 +76,4 @@ library
   
   build-tools:         c2hs
   extra-libraries:     wlc
-  c-sources:           dist/build/WLC.chs.c
+  -- c-sources:
