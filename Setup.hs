@@ -44,7 +44,7 @@ getRecursiveContents topdir = do
            return (concat paths)
 
 chsBuildHook :: PackageDescription -> LocalBuildInfo -> UserHooks -> BuildFlags -> IO ()
-chsBuildHook pd lbi uh bf = hook `catchExitCode` \_ -> hook
+chsBuildHook pd lbi uh bf = (hook `catchExitCode` \_ -> hook) >> hook
   where
     hook :: IO ()
     hook = chsBuildHook' pd lbi uh bf
