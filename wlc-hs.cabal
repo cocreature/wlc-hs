@@ -13,7 +13,7 @@ name:                wlc-hs
 version:             0.1.0.0
 
 -- A short (one-line) description of the package.
--- synopsis:            
+synopsis:            Haskell bindings for the wlc library
 
 -- A longer description of the package.
 -- description:         
